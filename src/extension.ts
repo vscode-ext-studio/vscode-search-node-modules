@@ -5,6 +5,8 @@ import { findParentModules } from './find-parent-modules';
 import { findChildPackages } from './find-child-packages';
 import { showError } from './util/utils';
 import { sortFiles } from './util/sort-files';
+import { join } from 'path';
+import { Uri } from 'vscode';
 
 let lastFolder = '';
 let lastWorkspaceName = '';
@@ -64,34 +66,42 @@ export function activate(context: vscode.ExtensionContext) {
                 }
 
 
-                vscode.window.showQuickPick(options, {
+                const items = options.map(name => {
+                    const isPackageJson = name === 'package.json';
+                    return {
+                        label: name,
+                        picked: isPackageJson,
+                        iconPath: isPackageJson ? Uri.file(join(context.extensionPath, 'icons', 'nodejs.svg')) : undefined,
+                    } as vscode.QuickPickItem
+                });
+                vscode.window.showQuickPick(items, {
                     placeHolder: path.format({ dir: workspaceName, base: folderPath })
 
-                })
-                    .then(selected => {
-                        // node_modules shortcut selected
-                        if (selected === workspaceNodeModules) {
-                            searchPath(workspaceName, workspaceRoot, nodeModulesPath);
-                        } else {
-                            const selectedPath = path.join(folderPath, selected);
-                            const selectedFullPath = path.join(workspaceRoot, selectedPath);
+                }).then(item => {
+                    const selected = item.label;
+                    // node_modules shortcut selected
+                    if (selected === workspaceNodeModules) {
+                        searchPath(workspaceName, workspaceRoot, nodeModulesPath);
+                    } else {
+                        const selectedPath = path.join(folderPath, selected);
+                        const selectedFullPath = path.join(workspaceRoot, selectedPath);
 
-                            // If selected is a folder, traverse it,
-                            // otherwise open file.
-                            fs.stat(selectedFullPath, (statErr, stats) => {
-                                if (stats.isDirectory()) {
-                                    searchPath(workspaceName, workspaceRoot, selectedPath);
-                                } else {
-                                    lastWorkspaceName = workspaceName;
-                                    lastWorkspaceRoot = workspaceRoot;
-                                    lastFolder = folderPath;
+                        // If selected is a folder, traverse it,
+                        // otherwise open file.
+                        fs.stat(selectedFullPath, (statErr, stats) => {
+                            if (stats.isDirectory()) {
+                                searchPath(workspaceName, workspaceRoot, selectedPath);
+                            } else {
+                                lastWorkspaceName = workspaceName;
+                                lastWorkspaceRoot = workspaceRoot;
+                                lastFolder = folderPath;
 
-                                    vscode.workspace.openTextDocument(selectedFullPath, selectedPath)
-                                        .then(vscode.window.showTextDocument);
-                                }
-                            });
-                        }
-                    });
+                                vscode.workspace.openTextDocument(selectedFullPath)
+                                    .then(vscode.window.showTextDocument);
+                            }
+                        });
+                    }
+                });
             });
         };
 
