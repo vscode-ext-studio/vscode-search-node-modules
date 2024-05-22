@@ -1,21 +1,19 @@
-const fs = require('fs');
-const util = require('util');
-const path = require('path');
-const loadJsonFile = require('load-json-file');
-const glob = util.promisify(require('glob'));
-const { showWarning } = require('./utils');
-
-const exists = util.promisify(fs.exists);
+import * as fs from 'fs';
+import glob from 'glob';
+import loadJsonFile from 'load-json-file';
+import * as path from 'path';
+import { showWarning } from './util/utils';
+import { existsSync } from 'fs';
 
 const PACKAGE_JSON_FILE = 'package.json';
 const LERNA_CONFIG_FILE = 'lerna.json';
 const DOUBLE_STAR = '**'; // globstar
 
-const flat = arrays => [].concat.apply([], arrays);
+const flat = (arrays: any[][]): any[] => [].concat.apply([], arrays);
 
-const distinct = array => [ ...new Set(array) ];
+const distinct = (array: any[]): any[] => [...new Set(array)];
 
-const findPatternMatches = async (root, pattern) => {
+const findPatternMatches = async (root: string, pattern: string): Promise<string[]> => {
     // patterns with double star e.g. '/src/**/' are not supported at the moment, because they are too general and may match nested node_modules
     if (pattern.includes(DOUBLE_STAR)) return [];
 
@@ -26,31 +24,31 @@ const findPatternMatches = async (root, pattern) => {
     return matches.map(match => path.join(match, '..'));
 };
 
-const getLernaPackagesConfig = async root => {
+const getLernaPackagesConfig = async (root: string): Promise<string[]> => {
     const lernaConfigFile = path.join(root, LERNA_CONFIG_FILE);
-    if (!(await exists(lernaConfigFile))) {
+    if (!(existsSync(lernaConfigFile))) {
         return [];
     }
 
-    const config = await loadJsonFile(lernaConfigFile).catch(() =>
+    const config: any = await loadJsonFile(lernaConfigFile).catch(() =>
         showWarning(`Ignoring invalid ${LERNA_CONFIG_FILE} file at: ${lernaConfigFile}`)
     );
     return config && Array.isArray(config.packages) ? config.packages : [];
 };
 
-const getYarnWorkspacesConfig = async root => {
+const getYarnWorkspacesConfig = async (root: string): Promise<string[]> => {
     const packageJsonFile = path.join(root, PACKAGE_JSON_FILE);
-    if (!(await exists(packageJsonFile))) {
+    if (!(existsSync(packageJsonFile))) {
         return [];
     }
 
-    const config = await loadJsonFile(packageJsonFile).catch(() =>
+    const config: any = await loadJsonFile(packageJsonFile).catch(() =>
         showWarning(`Ignoring invalid ${PACKAGE_JSON_FILE} file at: ${packageJsonFile}`)
     );
     return config && Array.isArray(config.workspaces) ? config.workspaces : [];
 };
 
-const findChildPackages = async root => {
+export const findChildPackages = async (root: string): Promise<string[]> => {
     const patterns = distinct([
         ...(await getLernaPackagesConfig(root)),
         ...(await getYarnWorkspacesConfig(root))
@@ -62,5 +60,3 @@ const findChildPackages = async root => {
 
     return flat(matchesArr);
 };
-
-module.exports = { findChildPackages };
