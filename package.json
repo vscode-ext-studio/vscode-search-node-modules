@@ -17,7 +17,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:npm.jumper.search"
+        "onStartupFinished"
     ],
     "main": "./out/extension.js",
     "contributes": {

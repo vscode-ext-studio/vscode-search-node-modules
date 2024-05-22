@@ -1,10 +1,11 @@
 import { existsSync, readdirSync, statSync } from 'fs';
 import { format, join } from 'path';
-import vscode, { ThemeIcon, Uri } from 'vscode';
+import vscode, { ThemeIcon, Uri, languages } from 'vscode';
 import { findChildPackages } from './find-child-packages';
 import { findParentModules } from './find-parent-modules';
 import { sortFiles } from './util/sort-files';
 import { showError } from './util/utils';
+import { DependencyLinkProvider } from './provider/dependencyLinkProvider';
 
 let lastFolder = '';
 let lastWorkspaceName = '';
@@ -14,6 +15,9 @@ const nodeModules = 'node_modules';
 
 export function activate(context: vscode.ExtensionContext) {
 
+    context.subscriptions.push(
+        languages.registerDocumentLinkProvider(['javascript', { pattern: '**/package.json' }], new DependencyLinkProvider())
+    );
     const fileIcon = Uri.file(join(context.extensionPath, 'icons', 'file.svg'))
     const folderIcon = Uri.file(join(context.extensionPath, 'icons', 'folder.svg'))
     const packageIcon = Uri.file(join(context.extensionPath, 'icons', 'nodejs.svg'))
