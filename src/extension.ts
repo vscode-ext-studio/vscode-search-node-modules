@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
             const folderFullPath = join(workspaceRoot, folderPath);
 
             // Read folder, built quick pick with files/folder (and shortcuts)
-            const files = readdirSync(folderFullPath);
+            const files = readdirSync(folderFullPath).filter(file => file !== '.package-lock.json');
             const isParentFolder = folderPath.includes('..');
             const options = sortFiles(files, orderPriority);
 
