@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import glob from 'glob';
 import loadJsonFile from 'load-json-file';
 import * as path from 'path';
@@ -8,8 +7,6 @@ import { existsSync } from 'fs';
 const PACKAGE_JSON_FILE = 'package.json';
 const LERNA_CONFIG_FILE = 'lerna.json';
 const DOUBLE_STAR = '**'; // globstar
-
-const flat = (arrays: any[][]): any[] => [].concat.apply([], arrays);
 
 const distinct = (array: any[]): any[] => [...new Set(array)];
 
@@ -38,7 +35,7 @@ const getLernaPackagesConfig = async (root: string): Promise<string[]> => {
 
 const getYarnWorkspacesConfig = async (root: string): Promise<string[]> => {
     const packageJsonFile = path.join(root, PACKAGE_JSON_FILE);
-    if (!(existsSync(packageJsonFile))) {
+    if (!existsSync(packageJsonFile)) {
         return [];
     }
 
@@ -58,5 +55,5 @@ export const findChildPackages = async (root: string): Promise<string[]> => {
         patterns.map(pattern => findPatternMatches(root, pattern))
     );
 
-    return flat(matchesArr);
+    return matchesArr.flat();
 };
