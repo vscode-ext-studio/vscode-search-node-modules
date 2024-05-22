@@ -1,8 +1,8 @@
+import { existsSync } from 'fs';
 import glob from 'glob';
 import loadJsonFile from 'load-json-file';
-import * as path from 'path';
+import { join } from 'path';
 import { showWarning } from './util/utils';
-import { existsSync } from 'fs';
 
 const PACKAGE_JSON_FILE = 'package.json';
 const LERNA_CONFIG_FILE = 'lerna.json';
@@ -14,15 +14,15 @@ const findPatternMatches = async (root: string, pattern: string): Promise<string
     // patterns with double star e.g. '/src/**/' are not supported at the moment, because they are too general and may match nested node_modules
     if (pattern.includes(DOUBLE_STAR)) return [];
 
-    const matches = await glob(path.join(pattern, PACKAGE_JSON_FILE), {
+    const matches = await glob(join(pattern, PACKAGE_JSON_FILE), {
         cwd: root
     });
 
-    return matches.map(match => path.join(match, '..'));
+    return matches.map(match => join(match, '..'));
 };
 
 const getLernaPackagesConfig = async (root: string): Promise<string[]> => {
-    const lernaConfigFile = path.join(root, LERNA_CONFIG_FILE);
+    const lernaConfigFile = join(root, LERNA_CONFIG_FILE);
     if (!(existsSync(lernaConfigFile))) {
         return [];
     }
@@ -34,7 +34,7 @@ const getLernaPackagesConfig = async (root: string): Promise<string[]> => {
 };
 
 const getYarnWorkspacesConfig = async (root: string): Promise<string[]> => {
-    const packageJsonFile = path.join(root, PACKAGE_JSON_FILE);
+    const packageJsonFile = join(root, PACKAGE_JSON_FILE);
     if (!existsSync(packageJsonFile)) {
         return [];
     }

@@ -1,6 +1,5 @@
-import * as fs from 'fs';
-import { existsSync } from 'fs';
-import * as path from 'path';
+import { existsSync, readdirSync } from 'fs';
+import path from 'path';
 
 // Looks for node_modules in parent folders of the workspace recursively.
 // Returns a list of paths relative to workspaceRoot/nodeModulesPath
@@ -13,7 +12,7 @@ export const findParentModules = async (workspaceRoot: string, nodeModulesPath: 
         if (existsSync(dir)) {
             const getFilePath = (file: string) =>
                 path.relative(path.join(workspaceRoot, nodeModulesPath), path.join(dir, file));
-            const dirFiles = fs.readdirSync(dir);
+            const dirFiles = readdirSync(dir);
             ret.push(...dirFiles.map(getFilePath));
         }
 

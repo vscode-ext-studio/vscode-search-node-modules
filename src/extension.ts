@@ -1,12 +1,10 @@
-import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
-import { findParentModules } from './find-parent-modules';
+import { readdirSync, statSync } from 'fs';
+import { format, join } from 'path';
+import vscode, { Uri } from 'vscode';
 import { findChildPackages } from './find-child-packages';
-import { showError } from './util/utils';
+import { findParentModules } from './find-parent-modules';
 import { sortFiles } from './util/sort-files';
-import { join } from 'path';
-import { Uri } from 'vscode';
+import { showError } from './util/utils';
 
 let lastFolder = '';
 let lastWorkspaceName = '';
@@ -23,9 +21,9 @@ export function activate(context: vscode.ExtensionContext) {
         const searchParentModules = preferences.get('searchParentModules', true);
         const orderPriority = preferences.get('orderPriority', []);
 
-        const searchPath = (workspaceName: string, workspaceRoot: string, folderPath: string) => {
+        const searchPath = async (workspaceName: string, workspaceRoot: string, folderPath: string) => {
             // Path to node_modules in this workspace folder
-            const workspaceNodeModules = path.join(workspaceName, nodeModulesPath);
+            const workspaceNodeModules = join(workspaceName, nodeModulesPath);
 
             // Reset last folder
             lastFolder = '';
@@ -33,75 +31,63 @@ export function activate(context: vscode.ExtensionContext) {
             lastWorkspaceRoot = '';
 
             // Path to current folder
-            const folderFullPath = path.join(workspaceRoot, folderPath);
+            const folderFullPath = join(workspaceRoot, folderPath);
 
             // Read folder, built quick pick with files/folder (and shortcuts)
-            fs.readdir(folderFullPath, async (readErr, files) => {
-                if (readErr) {
-                    if (folderPath === nodeModulesPath) {
-                        return showError('No node_modules folder in this workspace.');
-                    }
+            const files = readdirSync(folderFullPath);
+            const isParentFolder = folderPath.includes('..');
+            const options = sortFiles(files, orderPriority);
 
-                    return showError(`Unable to open folder ${folderPath}`);
+            // If searching in root node_modules, also include modules from parent folders, that are outside of the workspace
+            if (folderPath === nodeModulesPath) {
+                if (searchParentModules) {
+                    const parentModules = await findParentModules(workspaceRoot, nodeModulesPath);
+                    options.push(...parentModules);
                 }
+            } else {
+                // Otherwise, show option to move back to root
+                options.push('');
+                options.push(workspaceNodeModules);
+                // If current folder is not outside of the workspace, also add option to move a step back
+                if (!isParentFolder) {
+                    options.push('..');
+                }
+            }
+            const items = options.map(name => {
+                const isPackageJson = name === 'package.json';
+                return {
+                    label: name,
+                    kind: name == '' ? vscode.QuickPickItemKind.Separator : undefined,
+                    picked: isPackageJson,
+                    iconPath: isPackageJson ? Uri.file(join(context.extensionPath, 'icons', 'nodejs.svg')) : undefined,
+                } as vscode.QuickPickItem
+            });
+            vscode.window.showQuickPick(items, {
+                placeHolder: format({ dir: workspaceName, base: folderPath })
 
-                const isParentFolder = folderPath.includes('..');
-                const options = sortFiles(files, orderPriority);
-
-                // If searching in root node_modules, also include modules from parent folders, that are outside of the workspace
-                if (folderPath === nodeModulesPath) {
-                    if (searchParentModules) {
-                        const parentModules = await findParentModules(workspaceRoot, nodeModulesPath);
-                        options.push(...parentModules);
-                    }
+            }).then(item => {
+                if (!item) return;
+                const selected = item.label;
+                // node_modules shortcut selected
+                if (selected === workspaceNodeModules) {
+                    searchPath(workspaceName, workspaceRoot, nodeModulesPath);
                 } else {
-                    // Otherwise, show option to move back to root
-                    options.push('');
-                    options.push(workspaceNodeModules);
+                    const selectedPath = join(folderPath, selected);
+                    const selectedFullPath = join(workspaceRoot, selectedPath);
+                    // If selected is a folder, traverse it,
+                    // otherwise open file.
+                    const stats = statSync(selectedFullPath)
+                    if (stats.isDirectory()) {
+                        searchPath(workspaceName, workspaceRoot, selectedPath);
+                    } else {
+                        lastWorkspaceName = workspaceName;
+                        lastWorkspaceRoot = workspaceRoot;
+                        lastFolder = folderPath;
 
-                    // If current folder is not outside of the workspace, also add option to move a step back
-                    if (!isParentFolder) {
-                        options.push('..');
+                        vscode.workspace.openTextDocument(selectedFullPath)
+                            .then(vscode.window.showTextDocument);
                     }
                 }
-
-
-                const items = options.map(name => {
-                    const isPackageJson = name === 'package.json';
-                    return {
-                        label: name,
-                        picked: isPackageJson,
-                        iconPath: isPackageJson ? Uri.file(join(context.extensionPath, 'icons', 'nodejs.svg')) : undefined,
-                    } as vscode.QuickPickItem
-                });
-                vscode.window.showQuickPick(items, {
-                    placeHolder: path.format({ dir: workspaceName, base: folderPath })
-
-                }).then(item => {
-                    const selected = item.label;
-                    // node_modules shortcut selected
-                    if (selected === workspaceNodeModules) {
-                        searchPath(workspaceName, workspaceRoot, nodeModulesPath);
-                    } else {
-                        const selectedPath = path.join(folderPath, selected);
-                        const selectedFullPath = path.join(workspaceRoot, selectedPath);
-
-                        // If selected is a folder, traverse it,
-                        // otherwise open file.
-                        fs.stat(selectedFullPath, (statErr, stats) => {
-                            if (stats.isDirectory()) {
-                                searchPath(workspaceName, workspaceRoot, selectedPath);
-                            } else {
-                                lastWorkspaceName = workspaceName;
-                                lastWorkspaceRoot = workspaceRoot;
-                                lastFolder = folderPath;
-
-                                vscode.workspace.openTextDocument(selectedFullPath)
-                                    .then(vscode.window.showTextDocument);
-                            }
-                        });
-                    }
-                });
             });
         };
 
@@ -112,7 +98,7 @@ export function activate(context: vscode.ExtensionContext) {
                 const selected = await vscode.window.showQuickPick(
                     [
                         { label: workspaceFolder.name, packageDir: '' }, // First option is the root dir
-                        ...packages.map(packageDir => ({ label: path.join(workspaceFolder.name, packageDir), packageDir }))
+                        ...packages.map(packageDir => ({ label: join(workspaceFolder.name, packageDir), packageDir }))
                     ]
                     , { placeHolder: 'Select Project' }
                 );
@@ -122,7 +108,7 @@ export function activate(context: vscode.ExtensionContext) {
 
                 return {
                     name: selected.label,
-                    path: path.join(workspaceFolder.uri.fsPath, selected.packageDir)
+                    path: join(workspaceFolder.uri.fsPath, selected.packageDir)
                 };
             }
 
