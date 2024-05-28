@@ -2,7 +2,7 @@
     "name": "npm-dependency-jumper",
     "displayName": "NPM Dependency Jumper",
     "description": "Quickly jump from package.json to the definition in node_modules.",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "publisher": "cweijan",
     "icon": "img/npm-logo.png",
     "engines": {
