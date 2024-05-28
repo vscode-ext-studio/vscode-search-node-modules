@@ -1,5 +1,6 @@
+import { existsSync } from 'fs';
 import { resolve } from 'path';
-import { DocumentLink, DocumentLinkProvider, ProviderResult, Range, TextDocument, Uri } from 'vscode';
+import { DocumentLink, DocumentLinkProvider, ProviderResult, Range, TextDocument, Uri, workspace } from 'vscode';
 
 export class DependencyLinkProvider implements DocumentLinkProvider {
     provideDocumentLinks(document: TextDocument): ProviderResult<DocumentLink[]> {
@@ -28,8 +29,20 @@ export class DependencyLinkProvider implements DocumentLinkProvider {
         const startCharacter: number = line.text.indexOf(packageName);
         const endCharacter: number = startCharacter + packageName.length;
         const linkRange: Range = new Range(lineIndex, startCharacter, lineIndex, endCharacter);
-        const linkUri: Uri = isWeb ? Uri.parse(`https://www.npmjs.com/package/${packageName}`) :
-            Uri.file(resolve(document.uri.fsPath, '..', 'node_modules', packageName, 'package.json'))
+        let linkUri: Uri = Uri.parse(`https://www.npmjs.com/package/${packageName}`);
+        if (!isWeb) {
+            const basePathList = [
+                workspace.rootPath,
+                resolve(document.uri.fsPath, '..')
+            ]
+            for (const item of basePathList) {
+                const dependencyPath = resolve(item, 'node_modules', packageName, 'package.json');
+                if (existsSync(dependencyPath)) {
+                    linkUri = Uri.file(dependencyPath);
+                    break;
+                }
+            }
+        }
         return new DocumentLink(linkRange, linkUri);
     }
 
