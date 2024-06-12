@@ -3,7 +3,7 @@ export const Icons = {
   CHECKED: "✓",
   CHECKING: "🗘",
   PENDING: "⭳",
-  UPDATABLE: "⚠",
+  UPDATABLE: "🔄",
 }
 
 export const Margins = {
