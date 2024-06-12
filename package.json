@@ -61,6 +61,64 @@
                         "package.json"
                     ],
                     "description": "List of preferred names that should be shown at the top of the result list"
+                },
+                "npm-outdated.level": {
+                    "order": 1000,
+                    "type": "string",
+                    "default": "major",
+                    "enum": [
+                        "major",
+                        "minor",
+                        "patch"
+                    ],
+                    "enumDescriptions": [
+                        "%npm-outdated.configuration.level.major.description%",
+                        "%npm-outdated.configuration.level.minor.description%",
+                        "%npm-outdated.configuration.level.patch.description%"
+                    ],
+                    "markdownDescription": "%npm-outdated.configuration.level.description%"
+                },
+                "npm-outdated.majorUpdateProtection": {
+                    "order": 2000,
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "%npm-outdated.configuration.majorUpdateProtection.description%"
+                },
+                "npm-outdated.identifySecurityAdvisories": {
+                    "order": 2500,
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "%npm-outdated.configuration.identifySecurityAdvisories.description%"
+                },
+                "npm-outdated.decorations": {
+                    "order": 3000,
+                    "type": "string",
+                    "enum": [
+                        "fancy",
+                        "simple",
+                        "disabled"
+                    ],
+                    "enumDescriptions": [
+                        "%npm-outdated.configuration.decorations.fancy.description%",
+                        "%npm-outdated.configuration.decorations.simple.description%",
+                        "%npm-outdated.configuration.decorations.disabled.description%"
+                    ],
+                    "default": "fancy",
+                    "markdownDescription": "%npm-outdated.configuration.decorations.description%"
+                },
+                "npm-outdated.cacheLifetime": {
+                    "order": 9000,
+                    "type": "number",
+                    "default": 60,
+                    "minimum": 1,
+                    "markdownDescription": "%npm-outdated.configuration.cacheLifetime.description%"
+                },
+                "npm-outdated.parallelProcessesLimit": {
+                    "order": 9100,
+                    "type": "number",
+                    "default": 20,
+                    "minimum": 0,
+                    "markdownDescription": "%npm-outdated.configuration.parallelProcessesLimit.description%"
                 }
             }
         }

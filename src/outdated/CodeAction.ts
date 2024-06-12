@@ -1,13 +1,4 @@
-import {
-  CodeAction,
-  CodeActionKind,
-  CodeActionProvider,
-  l10n,
-  languages,
-  Range,
-  TextDocument,
-  WorkspaceEdit,
-} from "vscode"
+import { CodeAction, CodeActionKind, CodeActionProvider, l10n, languages, Range, TextDocument, WorkspaceEdit, } from "vscode"
 import { COMMAND_INSTALL_REQUEST } from "./Command"
 import { DiagnosticType, PackageRelatedDiagnostic } from "./Diagnostic"
 import { pluginName } from "./plugin"

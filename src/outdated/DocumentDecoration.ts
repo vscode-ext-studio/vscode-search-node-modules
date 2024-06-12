@@ -1,14 +1,5 @@
 import { prerelease } from "semver"
-import {
-  DecorationOptions,
-  l10n,
-  Range,
-  TextDocument,
-  TextEditor,
-  TextEditorDecorationType,
-  ThemableDecorationAttachmentRenderOptions,
-  window,
-} from "vscode"
+import { DecorationOptions, l10n, Range, TextDocument, TextEditor, TextEditorDecorationType, ThemableDecorationAttachmentRenderOptions, window, } from "vscode"
 import { PackageRelatedDiagnostic } from "./Diagnostic"
 import { PackageAdvisory } from "./NPM"
 import { PackageInfo } from "./PackageInfo"

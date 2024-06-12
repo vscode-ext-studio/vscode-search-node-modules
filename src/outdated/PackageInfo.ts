@@ -1,14 +1,4 @@
-import {
-  coerce,
-  diff,
-  gt,
-  gte,
-  maxSatisfying,
-  prerelease,
-  ReleaseType,
-  valid,
-  validRange,
-} from "semver"
+import { coerce, diff, gt, gte, maxSatisfying, prerelease, ReleaseType, valid, validRange, } from "semver"
 import { Range } from "vscode"
 import { getPackagesInstalled, getPackageVersions } from "./NPM"
 import { getLevel, hasMajorUpdateProtection } from "./Settings"

@@ -1,25 +1,6 @@
 import { sep } from "path"
-import {
-  intersects,
-  maxSatisfying,
-  minSatisfying,
-  prerelease,
-  satisfies,
-} from "semver"
-import {
-  Diagnostic,
-  DiagnosticCollection,
-  DiagnosticSeverity,
-  ExtensionContext,
-  l10n,
-  Range,
-  TextDocument,
-  TextDocumentChangeEvent,
-  TextEditor,
-  Uri,
-  window,
-  workspace,
-} from "vscode"
+import { intersects, maxSatisfying, minSatisfying, prerelease, satisfies, } from "semver"
+import { Diagnostic, DiagnosticCollection, DiagnosticSeverity, ExtensionContext, l10n, Range, TextDocument, TextDocumentChangeEvent, TextEditor, Uri, window, workspace, } from "vscode"
 import { DIAGNOSTIC_ACTION } from "./CodeAction"
 import { getDocumentPackages } from "./Document"
 import {

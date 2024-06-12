@@ -1,22 +1,7 @@
-import {
-  CodeActionKind,
-  commands,
-  ExtensionContext,
-  languages,
-  TextDocument,
-  window,
-} from "vscode"
+import { CodeActionKind, commands, ExtensionContext, languages, TextDocument, window, } from "vscode"
 import { PackageJsonCodeActionProvider } from "./CodeAction"
-import {
-  COMMAND_INSTALL,
-  COMMAND_INSTALL_REQUEST,
-  packageInstall,
-  packageInstallRequest,
-} from "./Command"
-import {
-  diagnosticSubscribe,
-  generatePackagesDiagnostics,
-} from "./Diagnostic"
+import { COMMAND_INSTALL, COMMAND_INSTALL_REQUEST, packageInstall, packageInstallRequest, } from "./Command"
+import { diagnosticSubscribe, generatePackagesDiagnostics, } from "./Diagnostic"
 import { lazyCallback } from "./Utils"
 
 export function activateOutdated(context: ExtensionContext): void {
