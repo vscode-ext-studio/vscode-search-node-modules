@@ -217,7 +217,7 @@ export class DocumentDecoration {
       new Message(
         packageVersionInstalled
           ? l10n.t("Update available:")
-          : l10n.t("Latest version:"),
+          : l10n.t("Latest:"),
         ThemeLight.LABEL_UPDATABLE,
         ThemeDark.LABEL_UPDATABLE
       ),
@@ -229,14 +229,7 @@ export class DocumentDecoration {
     ]
 
     if (!packageVersionInstalled) {
-      // If the package has not yet been installed by the user, but defined in the dependencies.
-      updateDetails.push(
-        new Message(
-          `(${l10n.t("install pending")})`,
-          ThemeLight.LABEL_PENDING,
-          ThemeDark.LABEL_PENDING
-        )
-      )
+
     } else if (
       await packageInfo.packageRelated.isVersionLatestAlreadyInstalled()
     ) {
