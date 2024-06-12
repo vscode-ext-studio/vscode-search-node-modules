@@ -1,4 +1,4 @@
-import { sep } from "node:path"
+import { sep } from "path"
 import {
   intersects,
   maxSatisfying,
@@ -20,27 +20,27 @@ import {
   window,
   workspace,
 } from "vscode"
-import { DIAGNOSTIC_ACTION } from "./CodeAction.js"
-import { getDocumentPackages } from "./Document.js"
+import { DIAGNOSTIC_ACTION } from "./CodeAction"
+import { getDocumentPackages } from "./Document"
 import {
   DocumentDecoration,
   DocumentDecorationManager,
-} from "./DocumentDecoration.js"
-import { DocumentDiagnostics } from "./DocumentDiagnostics.js"
+} from "./DocumentDecoration"
+import { DocumentDiagnostics } from "./DocumentDiagnostics"
 import {
   getPackagesAdvisories,
   PackagesAdvisories,
   packagesInstalledCache,
-} from "./NPM.js"
-import { PackageInfo } from "./PackageInfo.js"
-import { pluginName } from "./plugin.js"
+} from "./NPM"
+import { PackageInfo } from "./PackageInfo"
+import { pluginName } from "./plugin"
 import {
   getDecorationsMode,
   getParallelProcessesLimit,
   identifySecurityAdvisories,
-} from "./Settings.js"
-import { Icons } from "./Theme.js"
-import { promiseLimit } from "./Utils.js"
+} from "./Settings"
+import { Icons } from "./Theme"
+import { promiseLimit } from "./Utils"
 
 const PACKAGE_JSON_PATH = `${sep}package.json`
 

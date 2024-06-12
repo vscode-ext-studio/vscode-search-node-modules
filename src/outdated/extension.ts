@@ -6,18 +6,18 @@ import {
   TextDocument,
   window,
 } from "vscode"
-import { PackageJsonCodeActionProvider } from "./CodeAction.js"
+import { PackageJsonCodeActionProvider } from "./CodeAction"
 import {
   COMMAND_INSTALL,
   COMMAND_INSTALL_REQUEST,
   packageInstall,
   packageInstallRequest,
-} from "./Command.js"
+} from "./Command"
 import {
   diagnosticSubscribe,
   generatePackagesDiagnostics,
-} from "./Diagnostic.js"
-import { lazyCallback } from "./Utils.js"
+} from "./Diagnostic"
+import { lazyCallback } from "./Utils"
 
 export function activateOutdated(context: ExtensionContext): void {
   const diagnostics = languages.createDiagnosticCollection()

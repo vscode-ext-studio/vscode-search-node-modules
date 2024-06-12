@@ -1,5 +1,5 @@
 import { Diagnostic, DiagnosticCollection, TextDocument } from "vscode"
-import { lazyCallback } from "./Utils.js"
+import { lazyCallback } from "./Utils"
 
 // This class assists in managing diagnostics for the document.
 export class DocumentDiagnostics {
@@ -13,7 +13,7 @@ export class DocumentDiagnostics {
   constructor(
     private document: TextDocument,
     private diagnosticsCollection: DiagnosticCollection
-  ) {}
+  ) { }
 
   public push(diagnostic: Diagnostic): void {
     this.diagnostics.push(diagnostic)

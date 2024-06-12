@@ -1,7 +1,7 @@
-import { IncomingMessage } from "node:http"
-import https from "node:https"
-import url from "node:url"
-import zlib from "node:zlib"
+import { IncomingMessage } from "http"
+import https from "https"
+import url from "url"
+import zlib from "zlib"
 
 // This function allows to call a "lazy" callback.
 // The first execution can be delayed when the "wait" parameter is different from zero, otherwise it will be immediate.
@@ -162,7 +162,7 @@ export const fetchLite = <T>(options: FetchLite): Promise<T | undefined> => {
     if (options.body !== undefined) {
       const bodyStringify = zlib.gzipSync(JSON.stringify(options.body))
 
-      thisReq.setHeader("Content-Length", bodyStringify.length)
+      thisReq.setHeader("Content-Length", `${bodyStringify.length}`)
       thisReq.write(bodyStringify)
     }
 

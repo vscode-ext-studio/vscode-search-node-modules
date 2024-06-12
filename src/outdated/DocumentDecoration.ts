@@ -9,19 +9,19 @@ import {
   ThemableDecorationAttachmentRenderOptions,
   window,
 } from "vscode"
-import { PackageRelatedDiagnostic } from "./Diagnostic.js"
-import { PackageAdvisory } from "./NPM.js"
-import { PackageInfo } from "./PackageInfo.js"
-import { getDecorationsMode } from "./Settings.js"
-import { Icons, Margins, ThemeDark, ThemeLight } from "./Theme.js"
-import { lazyCallback } from "./Utils.js"
+import { PackageRelatedDiagnostic } from "./Diagnostic"
+import { PackageAdvisory } from "./NPM"
+import { PackageInfo } from "./PackageInfo"
+import { getDecorationsMode } from "./Settings"
+import { Icons, Margins, ThemeDark, ThemeLight } from "./Theme"
+import { lazyCallback } from "./Utils"
 
 class Message {
   constructor(
     public message: string,
     public styleDefault?: ThemableDecorationAttachmentRenderOptions,
     public styleDark?: ThemableDecorationAttachmentRenderOptions
-  ) {}
+  ) { }
 }
 
 // We need to store the styles that will be used.

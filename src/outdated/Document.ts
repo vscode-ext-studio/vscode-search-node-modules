@@ -1,6 +1,6 @@
 import { commands, DocumentSymbol, Range, TextDocument } from "vscode"
-import { PackageInfo } from "./PackageInfo.js"
-import { waitUntil } from "./Utils.js"
+import { PackageInfo } from "./PackageInfo"
+import { waitUntil } from "./Utils"
 
 // Process packages of a certain dependency type (eg from "dependencies" and "devDependencies").
 // Returns existing packages, their versions and the package range.
@@ -45,8 +45,8 @@ export const getDocumentPackages = async (
   }, 33)
 
   const symbolDependencies = symbols?.find(
-      (symbol) => symbol.name === "dependencies"
-    ),
+    (symbol) => symbol.name === "dependencies"
+  ),
     symbolDevDependencies = symbols?.find(
       (symbol) => symbol.name === "devDependencies"
     )

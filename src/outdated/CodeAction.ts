@@ -8,10 +8,10 @@ import {
   TextDocument,
   WorkspaceEdit,
 } from "vscode"
-import { COMMAND_INSTALL_REQUEST } from "./Command.js"
-import { DiagnosticType, PackageRelatedDiagnostic } from "./Diagnostic.js"
-import { pluginName } from "./plugin.js"
-import { hasMajorUpdateProtection } from "./Settings.js"
+import { COMMAND_INSTALL_REQUEST } from "./Command"
+import { DiagnosticType, PackageRelatedDiagnostic } from "./Diagnostic"
+import { pluginName } from "./plugin"
+import { hasMajorUpdateProtection } from "./Settings"
 
 export const DIAGNOSTIC_ACTION = pluginName
 
@@ -234,7 +234,7 @@ export class PackageJsonCodeActionProvider implements CodeActionProvider {
     const versionLatest = await diagnostic.packageRelated.getVersionLatest()
     const updateWarning =
       hasMajorUpdateProtection() &&
-      (await diagnostic.packageRelated.requiresVersionMajorUpdate())
+        (await diagnostic.packageRelated.requiresVersionMajorUpdate())
         ? ` (${l10n.t("major")})`
         : ""
 

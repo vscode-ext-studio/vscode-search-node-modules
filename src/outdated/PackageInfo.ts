@@ -10,8 +10,8 @@ import {
   validRange,
 } from "semver"
 import { Range } from "vscode"
-import { getPackagesInstalled, getPackageVersions } from "./NPM.js"
-import { getLevel, hasMajorUpdateProtection } from "./Settings.js"
+import { getPackagesInstalled, getPackageVersions } from "./NPM"
+import { getLevel, hasMajorUpdateProtection } from "./Settings"
 
 const PACKAGE_NAME_REGEXP =
   /^(?:@[a-z0-9-][a-z0-9-._]*\/)?[a-z0-9-][a-z0-9-._]*$/
@@ -41,7 +41,7 @@ export class PackageInfo {
     public range: Range,
     public version: string,
     public versionRange: Range // The package version range only.
-  ) {}
+  ) { }
 
   // Get the package line on `packages.json` document.
   public getLine(): number {
@@ -98,9 +98,9 @@ export class PackageInfo {
 
     return Boolean(
       versionLatest &&
-        versionInstalled &&
-        diff(versionLatest, versionInstalled) === "major" &&
-        gte(versionLatest, versionInstalled)
+      versionInstalled &&
+      diff(versionLatest, versionInstalled) === "major" &&
+      gte(versionLatest, versionInstalled)
     )
   }
 
@@ -143,7 +143,7 @@ export class PackageInfo {
 
     return Boolean(
       packageDiff &&
-        PACKAGE_DIFF_LEVELS[packageDiff] >= PACKAGE_DIFF_LEVELS[getLevel()]
+      PACKAGE_DIFF_LEVELS[packageDiff] >= PACKAGE_DIFF_LEVELS[getLevel()]
     )
   }
 
