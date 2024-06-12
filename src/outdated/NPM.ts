@@ -36,8 +36,11 @@ export const getPackageVersions = async (
     fetchLite<NPMRegistryPackage>({
       url: `https://registry.npmjs.org/${name}`,
     }).then((data) => {
-      if (data?.versions) {
-        return resolve(Object.keys(data.versions))
+      const versions = data?.versions
+      if (versions) {
+        const availableVersions = Object.keys(data.versions)
+          .filter((key) => !(versions[key] as any).deprecated)
+        return resolve(availableVersions)
       }
 
       // Uses `npm view` as a fallback.
