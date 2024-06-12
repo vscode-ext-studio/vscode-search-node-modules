@@ -6,6 +6,7 @@ import { findParentModules } from './find-parent-modules';
 import { sortFiles } from './util/sort-files';
 import { showError } from './util/utils';
 import { DependencyLinkProvider } from './provider/dependencyLinkProvider';
+import { activateOutdated } from './outdated/extension';
 
 let lastFolder = '';
 let lastWorkspaceName = '';
@@ -14,7 +15,7 @@ let lastWorkspaceRoot = '';
 const nodeModules = 'node_modules';
 
 export function activate(context: vscode.ExtensionContext) {
-
+    activateOutdated(context);
     context.subscriptions.push(
         languages.registerDocumentLinkProvider(['javascript', { pattern: '**/package.json' }], new DependencyLinkProvider())
     );
