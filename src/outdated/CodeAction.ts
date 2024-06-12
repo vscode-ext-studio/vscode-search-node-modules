@@ -47,12 +47,6 @@ export class PackageJsonCodeActionProvider implements CodeActionProvider {
     }
 
     if (!diagnosticsSelected.length) {
-      if (requiresInstallCount) {
-        return Promise.all([
-          this.createInstallAction(document, requiresInstallCount),
-        ])
-      }
-
       return Promise.resolve([])
     }
 
@@ -142,19 +136,6 @@ export class PackageJsonCodeActionProvider implements CodeActionProvider {
             updateWarning = ` (${l10n.t("major")})`
           }
         }
-      }
-
-      if (diagnosticsFiltered.length > diagnosticsSelectedFiltered.length) {
-        diagnosticsPromises.push(
-          this.createUpdateManyAction(
-            document,
-            diagnosticsFiltered,
-            `${l10n.t(
-              "Update all {0} packages",
-              diagnosticsFiltered.length
-            )}${updateWarning}`
-          )
-        )
       }
     }
 
