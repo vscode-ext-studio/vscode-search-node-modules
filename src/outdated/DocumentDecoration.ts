@@ -245,7 +245,7 @@ export class DocumentDecoration {
     if (await packageInfo.packageRelated.requiresVersionMajorUpdate()) {
       updateDetails.push(
         new Message(
-          `(${l10n.t("major update")})`,
+          `(${l10n.t("major")})`,
           ThemeLight.LABEL_MAJOR,
           ThemeDark.LABEL_MAJOR
         )
