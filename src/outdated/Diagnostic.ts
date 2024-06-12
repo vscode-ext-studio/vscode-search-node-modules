@@ -137,7 +137,7 @@ export const getPackageDiagnostic = async (
     return new PackageRelatedDiagnostic(
       packageInfo.versionRange,
       l10n.t("Package version not available."),
-      DiagnosticSeverity.Error,
+      DiagnosticSeverity.Information,
       document,
       packageInfo
     )
