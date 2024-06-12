@@ -1,7 +1,8 @@
-import { exec } from "child_process"
-import { dirname } from "path"
-import { commands, l10n, OutputChannel, TextDocument, window } from "vscode"
+import { dirname, resolve } from "path"
+import { commands, l10n, TextDocument, window } from "vscode"
 import { pluginName } from "./plugin"
+import { existsSync } from "fs"
+import { platform } from "os"
 
 export const COMMAND_INSTALL = `${pluginName}.install`
 export const COMMAND_INSTALL_REQUEST = `${pluginName}.installRequest`
@@ -9,16 +10,14 @@ export const COMMAND_INSTALL_REQUEST = `${pluginName}.installRequest`
 export const packageInstallRequest = async (
   document: TextDocument
 ): Promise<void> => {
-  // @see https://github.com/microsoft/vscode/blob/main/extensions/npm/package.json
-  const packageManager: string = await commands.executeCommand(
-    "npm.packageManager",
-    document.uri
-  )
 
-  const action = l10n.t("Do it for me!")
+  const yarnLockPath = resolve(document.uri.fsPath, '..', 'yarn.lock')
+  const packageManager = existsSync(yarnLockPath) ? 'yarn' : 'npm'
+
+  const action = l10n.t("Run")
   const result = await window.showInformationMessage(
     l10n.t(
-      "Save your package.json and run your package manager install command to finish updating packages."
+      "Run install command to finish updating packages."
     ),
     action
   )
@@ -34,36 +33,11 @@ export const packageInstallRequest = async (
   }
 }
 
-export const packageInstall = (
-  outputChannel: OutputChannel,
-  command: string,
-  cwd: string
-): void => {
-  outputChannel.clear()
-  outputChannel.show()
-  outputChannel.append(`${l10n.t("Installing selected packages...")}\n\n---\n`)
-
-  const process = exec(command, { cwd })
-  const handleData = (data: string): void => outputChannel.append(data)
-
-  let hasError = false
-
-  process.stdout?.on("data", handleData)
-  process.stderr?.on("data", (error: string) => {
-    hasError = true
-
-    handleData(error)
-  })
-
-  process.on("close", () => {
-    outputChannel.append(`\n---\n\n${l10n.t("Done.")}\n\n`)
-
-    if (!hasError) {
-      window.showInformationMessage(l10n.t("Packages installed successfully!"))
-    } else {
-      window.showErrorMessage(
-        l10n.t("Failed to install packages. Check the output console.")
-      )
-    }
-  })
+export const packageInstall = (command: string, cwd: string): void => {
+  const terminal = window.createTerminal({
+    name: `Update packages`, cwd,
+    shellPath: platform() == 'win32' ? 'cmd' : undefined,
+  });
+  terminal.sendText(`${command}\n`)
+  terminal.show()
 }

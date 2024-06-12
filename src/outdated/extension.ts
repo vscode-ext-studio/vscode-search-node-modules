@@ -1,4 +1,4 @@
-import { CodeActionKind, commands, ExtensionContext, languages, TextDocument, window, } from "vscode"
+import { CodeActionKind, commands, ExtensionContext, languages, TextDocument, } from "vscode"
 import { PackageJsonCodeActionProvider } from "./CodeAction"
 import { COMMAND_INSTALL, COMMAND_INSTALL_REQUEST, packageInstall, packageInstallRequest, } from "./Command"
 import { diagnosticSubscribe, generatePackagesDiagnostics, } from "./Diagnostic"
@@ -15,18 +15,10 @@ export function activateOutdated(context: ExtensionContext): void {
     })
   )
 
-  const outputChannel = window.createOutputChannel("npm Outdated")
-
   context.subscriptions.push(
     diagnostics,
-    outputChannel,
-
     commands.registerCommand(COMMAND_INSTALL_REQUEST, packageInstallRequest),
-    commands.registerCommand(
-      COMMAND_INSTALL,
-      packageInstall.bind(null, outputChannel)
-    ),
-
+    commands.registerCommand(COMMAND_INSTALL, packageInstall),
     languages.registerCodeActionsProvider(
       { language: "json", pattern: "**/package.json", scheme: "file" },
       new PackageJsonCodeActionProvider(),
