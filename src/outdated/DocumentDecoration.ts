@@ -215,9 +215,7 @@ export class DocumentDecoration {
         ThemeDark.ICON_UPDATABLE
       ),
       new Message(
-        packageVersionInstalled
-          ? l10n.t("Update available:")
-          : l10n.t("Latest:"),
+        l10n.t("Update:"),
         ThemeLight.LABEL_UPDATABLE,
         ThemeDark.LABEL_UPDATABLE
       ),
