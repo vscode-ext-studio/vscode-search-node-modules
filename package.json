@@ -2,7 +2,7 @@
     "name": "npm-dependency-helper",
     "displayName": "NPM Dependency Helper",
     "description": "Quickly jump from package.json to the definition in node_modules.",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "publisher": "cweijan",
     "icon": "img/npm-logo.png",
     "engines": {
